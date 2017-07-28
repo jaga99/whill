@@ -1,3 +1,7 @@
+###PRE-REQS###
+#python 3.4
+#beautifulSoup4
+
 import urllib
 import urllib.request
 from bs4 import BeautifulSoup
@@ -60,24 +64,35 @@ URL2 = last_line [-1]
 soup = make_soup(URL2)
 
 
-
+############   OUTPUTS   ############
 
 #Gives the E number for each match - primary key
 PrimaryK = re.findall("///E/(.*)/thisDate/", URL2)[0] 
-print (PrimaryK)
-
+print (PrimaryK,end=',')
 
 
 #Find the caption "Correct Sore", if exists carries on, otherwise quits
 if soup.find(text = "Correct Score"):
 	# Gets the fixture title
 	for title in soup.findAll('caption'):
-		getcontents(print (title.text.strip()),0)
+		fixture = (title.text.strip())
+		#split match name
+		hometeam = re.findall("(.*) v",fixture)[0]
+		awayteam = re.findall("v (.*)",fixture)[0]
+		print (hometeam,end=",")
+		print (awayteam,end=",")
+		
+
 	# Finds the "Correct Score" text, then hops two TDs to get Match result and odds
-	data = soup.find(text = "Correct Score").findNext('td').findNext('td')
-	# Could change from a for loop to something else, but this just prints out match result in a tidy format (text only)
-	for item in data:
-		getcontents(print (data.text.strip()),0)
+	data1 = soup.find(text = "Correct Score").findNext('td').findNext('td')
+	
+	#split score	
+	data = (data1.text.strip())
+	homescore = re.findall("(.*)-",data)[0]
+	awayscore = re.findall("-(.*) ",data)[0]
+	print (homescore,end=",")
+	print (awayscore)
+	
 # If webpage is not fully populated it will only print Primary key and error with BS
-else:
+else: 
 	print("gotta wait BS")
